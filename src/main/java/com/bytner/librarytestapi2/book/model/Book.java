@@ -1,9 +1,11 @@
 package com.bytner.librarytestapi2.book.model;
 
-import com.bytner.librarytestapi2.bookuser.model.BookUser;
+import com.bytner.librarytestapi2.bookuser.model.BookCustomer;
 import com.bytner.librarytestapi2.common.TypeOfBook;
-import com.bytner.librarytestapi2.user.model.User;
+import com.bytner.librarytestapi2.customer.model.Customer;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,15 +35,16 @@ public class Book {
 
     private String author;
 
+    @Enumerated(EnumType.STRING)
     private TypeOfBook typeOfBook;
 
     private boolean active = true;
 
     @ManyToOne
-    private User user;
+    private Customer user;
 
     @OneToMany(mappedBy = "book")
-    private Set<BookUser> bookUserSet;
+    private Set<BookCustomer> bookUserSet;
 
     @Override
     public String toString() {

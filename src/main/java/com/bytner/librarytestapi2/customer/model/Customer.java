@@ -1,42 +1,48 @@
-package com.bytner.librarytestapi2.bookuser.model;
+package com.bytner.librarytestapi2.customer.model;
 
 import com.bytner.librarytestapi2.book.model.Book;
-import com.bytner.librarytestapi2.user.model.User;
+import com.bytner.librarytestapi2.bookuser.model.BookCustomer;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.Set;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @Entity
-public class BookUser {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private LocalDate localDate;
+    private String firstName;
 
-    @ManyToOne
-    private Book book;
+    private String lastName;
 
-    @ManyToOne
-    private User user;
+    private String adress;
+
+    private boolean active = true;
+
+    @OneToMany()
+    private Set<Book> bookSet;
+
+    @OneToMany()
+    private Set<BookCustomer> bookUserSet;
 
     @Override
     public String toString() {
-        return localDate + " " + book.getTitle() + " " + user.getFirstName();
+        return firstName + " " + lastName;
     }
 }
