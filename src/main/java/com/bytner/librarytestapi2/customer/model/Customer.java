@@ -1,7 +1,7 @@
 package com.bytner.librarytestapi2.customer.model;
 
 import com.bytner.librarytestapi2.book.model.Book;
-import com.bytner.librarytestapi2.bookuser.model.BookCustomer;
+import com.bytner.librarytestapi2.bookuser.model.Rent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,7 +39,7 @@ public class Customer {
     private Set<Book> bookSet;
 
     @OneToMany()
-    private Set<BookCustomer> bookUserSet;
+    private Set<Rent> bookUserSet;
 
     @Override
     public String toString() {

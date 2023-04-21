@@ -15,6 +15,7 @@ public class BookDto {
     private TypeOfBook typeOfBook;
     private int userID;
     private int numOfBookCustomerList;
+    private boolean rentAvaliable;
 
     public static BookDto fromEntity(Book book) {
         return BookDto.builder()
@@ -22,6 +23,7 @@ public class BookDto {
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .typeOfBook(book.getTypeOfBook())
+                .rentAvaliable(book.isRentAvaliable())
                 .userID(book.getUser() == null ? 0 : book.getUser().getId())
                 .numOfBookCustomerList(book.getBookUserSet() == null ? 0 : book.getBookUserSet().size())
                 .build();

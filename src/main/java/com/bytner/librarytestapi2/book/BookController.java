@@ -2,10 +2,13 @@ package com.bytner.librarytestapi2.book;
 
 import com.bytner.librarytestapi2.book.model.Book;
 import com.bytner.librarytestapi2.book.model.command.CreateBookCommand;
+import com.bytner.librarytestapi2.book.model.command.UpdateBookCommand;
 import com.bytner.librarytestapi2.book.model.dto.BookDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +37,11 @@ public class BookController {
         Book toSave = createBookCommand.toEntity();
         Book saved = bookService.save(toSave);
         return BookDto.fromEntity(saved);
+    }
+
+    @PatchMapping("/{id}")
+    public BookDto blockOrUnlockRent(@PathVariable int id) {
+        Book update = bookService.blockOrUnlockRent(id);
+        return BookDto.fromEntity(update);
     }
 }

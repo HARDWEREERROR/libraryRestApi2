@@ -1,6 +1,6 @@
 package com.bytner.librarytestapi2.book.model;
 
-import com.bytner.librarytestapi2.bookuser.model.BookCustomer;
+import com.bytner.librarytestapi2.bookuser.model.Rent;
 import com.bytner.librarytestapi2.common.TypeOfBook;
 import com.bytner.librarytestapi2.customer.model.Customer;
 import jakarta.persistence.Entity;
@@ -40,11 +40,13 @@ public class Book {
 
     private boolean active = true;
 
+    private boolean rentAvaliable = true;
+
     @ManyToOne
     private Customer user;
 
     @OneToMany(mappedBy = "book")
-    private Set<BookCustomer> bookUserSet;
+    private Set<Rent> bookUserSet;
 
     @Override
     public String toString() {

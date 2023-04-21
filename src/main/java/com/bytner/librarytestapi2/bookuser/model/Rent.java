@@ -21,22 +21,24 @@ import java.time.LocalDate;
 @Setter
 @Builder
 @Entity
-public class BookCustomer {
+public class Rent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private LocalDate localDate;
+    private LocalDate localDateFrom;
+
+    private LocalDate localDateTo;
 
     @ManyToOne
     private Book book;
 
     @ManyToOne
-    private Customer user;
+    private Customer customer;
 
     @Override
     public String toString() {
-        return localDate + " " + book.getTitle() + " " + user.getFirstName();
+        return "From: " + " " + localDateFrom + " To: " + localDateTo + " " + book.getTitle() + " " + customer.getFirstName();
     }
 }
