@@ -3,6 +3,8 @@ package com.bytner.librarytestapi2.book;
 import com.bytner.librarytestapi2.book.model.Book;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -32,5 +34,9 @@ public class BookService {
             book.setRentAvaliable(true);
         }
         return bookRepository.save(book);
+    }
+
+    public Page<Book> getAllBooks(PageRequest pageRequest) {
+        return bookRepository.findAll(pageRequest);
     }
 }
