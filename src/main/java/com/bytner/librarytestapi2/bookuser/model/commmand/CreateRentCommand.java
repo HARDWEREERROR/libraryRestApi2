@@ -1,6 +1,7 @@
 package com.bytner.librarytestapi2.bookuser.model.commmand;
 
 import com.bytner.librarytestapi2.bookuser.model.Rent;
+import com.bytner.librarytestapi2.common.RentStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class CreateRentCommand {
         return Rent.builder()
                 .localDateFrom(localDateFrom)
                 .localDateTo(localDateTo)
+                .rentStatus(RentStatus.BOOKED)
                 .build();
     }
 }

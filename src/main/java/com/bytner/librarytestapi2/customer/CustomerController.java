@@ -1,5 +1,6 @@
 package com.bytner.librarytestapi2.customer;
 
+import com.bytner.librarytestapi2.book.model.dto.BookDto;
 import com.bytner.librarytestapi2.customer.model.Customer;
 import com.bytner.librarytestapi2.customer.model.command.CreateCustomerCommand;
 import com.bytner.librarytestapi2.customer.model.dto.CustomerDto;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,13 @@ public class CustomerController {
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         return customerService.getAllCustomers(pageRequest).stream()
                 .map(CustomerDto::fromEntity)
+                .toList();
+    }
+
+    @GetMapping("/{id}")
+    public List<BookDto> getCustomerHistory(@PathVariable int id) {
+        return customerService.getCustomerHistory(id).stream()
+                .map(BookDto::fromEntity)
                 .toList();
     }
 }

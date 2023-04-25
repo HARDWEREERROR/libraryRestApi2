@@ -1,6 +1,7 @@
 package com.bytner.librarytestapi2.book.model.command;
 
 import com.bytner.librarytestapi2.book.model.Book;
+import com.bytner.librarytestapi2.common.BookStatus;
 import com.bytner.librarytestapi2.common.TypeOfBook;
 
 import jakarta.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class CreateBookCommand {
                 .title(title)
                 .author(author)
                 .typeOfBook(typeOfBook)
+                .status(BookStatus.IN_STORAGE)
                 .rentAvaliable(true)
                 .active(true)
                 .build();

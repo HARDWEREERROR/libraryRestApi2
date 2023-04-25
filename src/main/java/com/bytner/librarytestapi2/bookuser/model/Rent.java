@@ -1,8 +1,11 @@
 package com.bytner.librarytestapi2.bookuser.model;
 
 import com.bytner.librarytestapi2.book.model.Book;
+import com.bytner.librarytestapi2.common.RentStatus;
 import com.bytner.librarytestapi2.customer.model.Customer;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,6 +33,9 @@ public class Rent {
     private LocalDate localDateFrom;
 
     private LocalDate localDateTo;
+
+    @Enumerated(EnumType.STRING)
+    private RentStatus rentStatus;
 
     @ManyToOne
     private Book book;

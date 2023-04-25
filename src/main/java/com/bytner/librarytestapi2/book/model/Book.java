@@ -1,6 +1,7 @@
 package com.bytner.librarytestapi2.book.model;
 
 import com.bytner.librarytestapi2.bookuser.model.Rent;
+import com.bytner.librarytestapi2.common.BookStatus;
 import com.bytner.librarytestapi2.common.TypeOfBook;
 import com.bytner.librarytestapi2.customer.model.Customer;
 import jakarta.persistence.Entity;
@@ -42,8 +43,11 @@ public class Book {
 
     private boolean rentAvaliable = true;
 
+    @Enumerated(EnumType.STRING)
+    private BookStatus status;
+
     @ManyToOne
-    private Customer user;
+    private Customer customer;
 
     @OneToMany(mappedBy = "book")
     private Set<Rent> bookUserSet;

@@ -16,19 +16,19 @@ public class CustomerDto {
     private String firstName;
     private String lastName;
     private String addres;
-    private int numOfBookSet;
-    private int numOfBookCustomerSet;
+//    private int numOfBookSet;
+    private int numOfRentSet;
 
     public static CustomerDto fromEntity(Customer customer) {
-        Set<Book> books = customer.getBookSet();
-        Set<Rent> rents = customer.getBookUserSet();
+//        Set<Book> books = customer.getBookSet();
+        Set<Rent> rents = customer.getRentSet();
         return CustomerDto.builder()
                 .id(customer.getId())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .addres(customer.getAdress())
-                .numOfBookSet(books == null ? 0 : books.size())
-                .numOfBookCustomerSet(rents == null ? 0 : rents.size())
+//                .numOfBookSet(books == null ? 0 : books.size())
+                .numOfRentSet(rents == null ? 0 : rents.size())
                 .build();
     }
 }

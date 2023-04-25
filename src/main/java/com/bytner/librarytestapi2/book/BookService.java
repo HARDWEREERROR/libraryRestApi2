@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -24,8 +25,9 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional
     public Book blockOrUnlockRent(int bookId) {
-        Book book = bookRepository.findById(bookId)
+        Book book = bookRepository.findWithLockingById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Book with id={0} has not been found", bookId)));
         if (book.isRentAvaliable() == true) {
