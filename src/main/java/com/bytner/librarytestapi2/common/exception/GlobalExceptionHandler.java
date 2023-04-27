@@ -1,6 +1,7 @@
 package com.bytner.librarytestapi2.common.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionDto handleIllegalArgumentException(IllegalArgumentException exception) {
+        return new ExceptionDto(exception.getMessage());
+    }
+
+    @ExceptionHandler(OptimisticLockException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handleOptimisticLockException(OptimisticLockException exception) {
         return new ExceptionDto(exception.getMessage());
     }
 }

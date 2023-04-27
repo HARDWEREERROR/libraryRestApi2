@@ -40,21 +40,21 @@ public class RentController {
         return RentDto.fromEntity(saved);
     }
 
-    @PatchMapping("/start/{id}")
+    @PatchMapping("/{id}/start")
     public RentDto startReservation(@PathVariable int id) {
         Rent update = rentService.startReservation(id);
         return RentDto.fromEntity(update);
     }
 
-    @PatchMapping("/end/{id}")
+    @PatchMapping("/{is}/start")
     public RentDto endReservation(@PathVariable int id) {
         Rent update = rentService.endReservation(id);
         return RentDto.fromEntity(update);
     }
 
-    @DeleteMapping("/cancel/{id}")
+    @DeleteMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelReservation(@PathVariable int id){
+    public void cancelReservation(@PathVariable int id) {
         rentService.deleteById(id);
     }
 }

@@ -36,7 +36,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDto CreateCustomer(@RequestBody @Valid CreateCustomerCommand createCustomerCommand) {
+    public CustomerDto createCustomer(@RequestBody @Valid CreateCustomerCommand createCustomerCommand) {
         Customer toSave = createCustomerCommand.toEntity();
         Customer saved = customerService.save(toSave);
         return CustomerDto.fromEntity(saved);
@@ -51,7 +51,7 @@ public class CustomerController {
                 .toList();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/books")
     public List<BookDto> getCustomerHistory(@PathVariable int id) {
         return customerService.getCustomerHistory(id).stream()
                 .map(BookDto::fromEntity)

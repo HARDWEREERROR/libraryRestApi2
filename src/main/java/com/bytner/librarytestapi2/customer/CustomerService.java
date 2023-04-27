@@ -33,7 +33,7 @@ public class CustomerService {
 
     @Transactional
     public List<Book> getCustomerHistory(int customerId) {
-        Customer customer = customerRepository.findWithLockingById(customerId)
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Customer with id={0} has not been found", customerId)));
 
