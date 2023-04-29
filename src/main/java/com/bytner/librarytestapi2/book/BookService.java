@@ -27,21 +27,36 @@ public class BookService {
     }
 
     @Transactional
-    public Book blockOrUnlockRent(int bookId) {
+    public Book blockRent(int bookId) {
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Book with id={0} has not been found", bookId)));
+
+        if (!book.isRentAvaliable()) {
+            throw new IllegalArgumentException("Book is already blocked");
+        }
+        book.setRentAvaliable(false);
+        try {
+            return bookRepository.save(book);
+        } catch (OptimisticLockException exception) {
+            throw new IllegalStateException("Book has been updated concurrently", exception);
+        }
+    }
+
+
+    @Transactional
+    public Book unlockRent(int bookId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Book with id={0} has not been found", bookId)));
 
         if (book.isRentAvaliable()) {
-            book.setRentAvaliable(false);
-        } else {
-            book.setRentAvaliable(true);
+            throw new IllegalArgumentException("Book is already unblocked");
         }
 
-        try {
-            return bookRepository.save(book);
-        } catch (OptimisticLockException exception) {
-            throw new OptimisticLockException("The book has been modified by another transaction.", exception);
-        }
+        book.setRentAvaliable(true);
+        bookRepository.saveAndFlush(book); // save and flush to perform optimistic lock check
+
+        return book;
     }
 
 

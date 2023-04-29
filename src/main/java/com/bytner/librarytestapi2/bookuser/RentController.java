@@ -34,9 +34,9 @@ public class RentController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public RentDto saveReservation(@RequestBody @Valid CreateRentCommand createBookCustomerCommand) {
-        Rent toSave = createBookCustomerCommand.toEntity();
-        Rent saved = rentService.saveReservation(toSave, createBookCustomerCommand.getBookId(), createBookCustomerCommand.getCustomerId());
+    public RentDto saveReservation(@RequestBody @Valid CreateRentCommand createRentCommand) {
+        Rent toSave = createRentCommand.toEntity();
+        Rent saved = rentService.saveReservation(toSave, createRentCommand.getBookId(), createRentCommand.getCustomerId());
         return RentDto.fromEntity(saved);
     }
 
@@ -46,7 +46,7 @@ public class RentController {
         return RentDto.fromEntity(update);
     }
 
-    @PatchMapping("/{is}/start")
+    @PatchMapping("/{id}/end")
     public RentDto endReservation(@PathVariable int id) {
         Rent update = rentService.endReservation(id);
         return RentDto.fromEntity(update);

@@ -41,9 +41,15 @@ public class BookController {
         return BookDto.fromEntity(saved);
     }
 
-    @PatchMapping("/{id}")
-    public BookDto blockOrUnlockRent(@PathVariable int id) {
-        Book update = bookService.blockOrUnlockRent(id);
+    @PatchMapping("/{id}/block")
+    public BookDto blockRent(@PathVariable int id) {
+        Book update = bookService.blockRent(id);
+        return BookDto.fromEntity(update);
+    }
+
+    @PatchMapping("/{id}/unlock")
+    public BookDto unblock(@PathVariable int id) {
+        Book update = bookService.unlockRent(id);
         return BookDto.fromEntity(update);
     }
 

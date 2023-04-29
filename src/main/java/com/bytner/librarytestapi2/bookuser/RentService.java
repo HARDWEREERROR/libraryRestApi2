@@ -53,7 +53,7 @@ public class RentService {
 
         List<Rent> overlappingRent = rentRepository.findByBookAndRentalDateRange(book, localDateFrom, localDateTo);
 
-        if (!overlappingRent.isEmpty()) {
+        if (overlappingRent.size() > 0) {
             throw new IllegalArgumentException("term is not available.");
         }
 

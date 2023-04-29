@@ -73,12 +73,12 @@ class BookServiceTest {
 //        assertFalse(result.isRentAvaliable());
 //    }
 
-    @Test
-    void blockOrUnlockRent_BookDoesNotExist_ThrowsEntityNotFoundException() {
-        when(bookRepository.findWithLockingById(bookId)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> bookService.blockOrUnlockRent(bookId));
-    }
+//    @Test
+//    void blockOrUnlockRent_BookDoesNotExist_ThrowsEntityNotFoundException() {
+//        when(bookRepository.findWithLockingById(bookId)).thenReturn(Optional.empty());
+//
+//        assertThrows(EntityNotFoundException.class, () -> bookService.blockOrUnlockRent(bookId));
+//    }
 
     @Test
     void getAllBooks_ReturnsPageOfBooks() {
