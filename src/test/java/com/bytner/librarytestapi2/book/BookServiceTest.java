@@ -88,7 +88,7 @@ class BookServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
         when(bookRepository.findAll(pageRequest)).thenReturn(bookPage);
 
-        Page<Book> result = bookService.getAllBooks(pageRequest);
+        Page<Book> result = bookService.getBooks(pageRequest);
 
         assertEquals(bookPage, result);
     }

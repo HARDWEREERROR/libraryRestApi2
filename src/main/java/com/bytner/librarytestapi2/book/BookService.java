@@ -6,11 +6,13 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,38 +31,34 @@ public class BookService {
     @Transactional
     public Book blockRent(int bookId) {
 
-        Book book = bookRepository.findById(bookId)
+        Book book = bookRepository.findWithOptimistickLockingById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Book with id={0} has not been found", bookId)));
 
         if (!book.isRentAvaliable()) {
-            throw new IllegalArgumentException("Book is already blocked");
+            throw new OptimisticLockException("Book has been updated concurrently");
         }
+
         book.setRentAvaliable(false);
-        try {
-            return bookRepository.save(book);
-        } catch (OptimisticLockException exception) {
-            throw new IllegalStateException("Book has been updated concurrently", exception);
-        }
+        return bookRepository.save(book);
     }
 
 
     @Transactional
     public Book unlockRent(int bookId) {
-        Book book = bookRepository.findById(bookId)
+        Book book = bookRepository.findWithOptimistickLockingById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Book with id={0} has not been found", bookId)));
 
         if (book.isRentAvaliable()) {
-            throw new IllegalArgumentException("Book is already unblocked");
+            throw new OptimisticLockException("Book has been updated concurrently");
         }
 
         book.setRentAvaliable(true);
-        bookRepository.saveAndFlush(book); // save and flush to perform optimistic lock check
+        return bookRepository.save(book);
 
-        return book;
     }
 
 
-    public Page<Book> getAllBooks(PageRequest pageRequest) {
+    public Page<Book> getBooks(Pageable pageRequest) {
         return bookRepository.findAll(pageRequest);
     }
 }
