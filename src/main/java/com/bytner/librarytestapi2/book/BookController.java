@@ -57,11 +57,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public Page<Book> getBooks(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "10") int size,
-                               @RequestParam(defaultValue = "id") String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        return bookService.getBooks(pageable);
+    public Page<BookDto> getBooks(Pageable pageable) {
+        return bookService.getBooks(pageable)
+                .map(BookDto::fromEntity);
     }
 
 

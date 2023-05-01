@@ -9,10 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,4 +94,50 @@ class BookServiceTest {
 
         assertEquals(bookPage, result);
     }
+
+//    @Test
+//    void blockRent_shouldLockBookAndSetRentUnavailable() {
+//        int bookId = 1;
+//        Book book = Book.builder()
+//                .title("Siema")
+//                .author("Hubert Bytner")
+//                .typeOfBook(TypeOfBook.ADVENTURE)
+//                .build();
+//        when(bookRepository.findWithOptimistickLockingById(bookId)).thenReturn(Optional.of(book));
+//        when(bookRepository.save(book)).thenReturn(book);
+//
+//        Book rentedBook = bookService.blockRent(bookId);
+//
+//        assertFalse(rentedBook.isRentAvaliable());
+//        verify(bookRepository, times(1)).findWithOptimistickLockingById(bookId);
+//        verify(bookRepository, times(1)).save(book);
+//    }
+
+    @Test
+    void blockRent_shouldThrowExceptionWhenBookNotFound() {
+        int bookId = 1;
+        when(bookRepository.findWithOptimistickLockingById(bookId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> bookService.blockRent(bookId));
+        assertEquals(MessageFormat.format("Book with id={0} has not been found", bookId), exception.getMessage());
+        verify(bookRepository, times(1)).findWithOptimistickLockingById(bookId);
+        verify(bookRepository, times(0)).save(any());
+    }
+
+    @Test
+    void blockRent_shouldThrowExceptionWhenBookAlreadyRented() {
+        int bookId = 1;
+        Book book = Book.builder()
+                .title("Siema")
+                .author("Hubert Bytner")
+                .typeOfBook(TypeOfBook.ADVENTURE)
+                .build();
+        when(bookRepository.findWithOptimistickLockingById(bookId)).thenReturn(Optional.of(book));
+
+        OptimisticLockingFailureException exception = assertThrows(OptimisticLockingFailureException.class, () -> bookService.blockRent(bookId));
+        assertEquals("Book has been updated concurrently", exception.getMessage());
+        verify(bookRepository, times(1)).findWithOptimistickLockingById(bookId);
+        verify(bookRepository, times(0)).save(any());
+    }
 }
+

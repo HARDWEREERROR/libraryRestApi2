@@ -35,8 +35,7 @@ public class RentController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public RentDto saveReservation(@RequestBody @Valid CreateRentCommand createRentCommand) {
-        Rent toSave = createRentCommand.toEntity();
-        Rent saved = rentService.saveReservation(toSave, createRentCommand.getBookId(), createRentCommand.getCustomerId());
+        Rent saved = rentService.saveReservation(createRentCommand);
         return RentDto.fromEntity(saved);
     }
 

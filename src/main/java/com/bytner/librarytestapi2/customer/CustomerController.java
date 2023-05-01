@@ -6,7 +6,9 @@ import com.bytner.librarytestapi2.customer.model.command.CreateCustomerCommand;
 import com.bytner.librarytestapi2.customer.model.dto.CustomerDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,12 +45,9 @@ public class CustomerController {
     }
 
     @GetMapping("/customers")
-    public List<CustomerDto> getAllCustomers(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "3") int size, @RequestParam(name = "sort", defaultValue = "id") String sortField, @RequestParam(name = "direction", defaultValue = "asc") String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return customerService.getAllCustomers(pageRequest).stream()
-                .map(CustomerDto::fromEntity)
-                .toList();
+    public Page<CustomerDto> getBooks(Pageable pageable) {
+        return customerService.getCustomers(pageable)
+                .map(CustomerDto::fromEntity);
     }
 
     @GetMapping("/{id}/books")
