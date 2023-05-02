@@ -20,10 +20,6 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public List<Customer> getAll() {
-        return customerRepository.findAllByActiveTrue();
-    }
-
     public Customer save(Customer customer) {
         return customerRepository.save(customer);
     }

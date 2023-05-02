@@ -29,13 +29,6 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @GetMapping
-    public List<CustomerDto> getAll() {
-        return customerService.getAll().stream()
-                .map(CustomerDto::fromEntity)
-                .toList();
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDto createCustomer(@RequestBody @Valid CreateCustomerCommand createCustomerCommand) {
@@ -44,8 +37,8 @@ public class CustomerController {
         return CustomerDto.fromEntity(saved);
     }
 
-    @GetMapping("/customers")
-    public Page<CustomerDto> getBooks(Pageable pageable) {
+    @GetMapping()
+    public Page<CustomerDto> getCustomers(Pageable pageable) {
         return customerService.getCustomers(pageable)
                 .map(CustomerDto::fromEntity);
     }

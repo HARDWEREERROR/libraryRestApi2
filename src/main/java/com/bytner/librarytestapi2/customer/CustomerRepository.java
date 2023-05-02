@@ -12,8 +12,6 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
-    List<Customer> findAllByActiveTrue();
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Customer> findWithLockingById(int id);
 

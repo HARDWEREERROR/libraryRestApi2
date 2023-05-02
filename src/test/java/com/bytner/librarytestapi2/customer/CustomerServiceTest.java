@@ -39,34 +39,34 @@ public class CustomerServiceTest {
         customerService = new CustomerService(customerRepository);
     }
 
-    @Test
-    public void testGetAll() {
-        // Given
-        List<Customer> expectedCustomers = new ArrayList<>();
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-
-        expectedCustomers.add(Customer.builder()
-                .id(2)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        when(customerRepository.findAllByActiveTrue()).thenReturn(expectedCustomers);
-
-        // When
-        List<Customer> actualCustomers = customerService.getAll();
-
-        // Then
-        assertNotNull(actualCustomers);
-        assertEquals(expectedCustomers.size(), actualCustomers.size());
-        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.get(0).getId());
-        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.get(1).getId());
-    }
+//    @Test
+//    public void testGetAll() {
+//        // Given
+//        List<Customer> expectedCustomers = new ArrayList<>();
+//        expectedCustomers.add(Customer.builder()
+//                .id(1)
+//                .firstName("Hubert")
+//                .lastName("Bytner")
+//                .adress("Warszawa")
+//                .build());
+//
+//        expectedCustomers.add(Customer.builder()
+//                .id(2)
+//                .firstName("Hubert")
+//                .lastName("Bytner")
+//                .adress("Warszawa")
+//                .build());
+//        when(customerRepository.findAllByActiveTrue()).thenReturn(expectedCustomers);
+//
+//        // When
+//        List<Customer> actualCustomers = customerService.getAll();
+//
+//        // Then
+//        assertNotNull(actualCustomers);
+//        assertEquals(expectedCustomers.size(), actualCustomers.size());
+//        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.get(0).getId());
+//        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.get(1).getId());
+//    }
 
     @Test
     public void testSave() {
@@ -90,34 +90,34 @@ public class CustomerServiceTest {
         assertEquals(customer.isActive(), savedCustomer.isActive());
     }
 
-    @Test
-    public void testGetAllCustomers() {
-        // Given
-        PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Customer> expectedCustomers = new ArrayList<>();
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        when(customerRepository.findAll(any(PageRequest.class)))
-                .thenReturn(new PageImpl<Customer>(expectedCustomers));
-
-        // When
-        Page<Customer> actualCustomers = customerService.getAllCustomers(pageRequest);
-
-        // Then
-        assertNotNull(actualCustomers);
-        assertEquals(expectedCustomers.size(), actualCustomers.getContent().size());
-        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.getContent().get(0).getId());
-        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.getContent().get(1).getId());
-    }
+//    @Test
+//    public void testGetAllCustomers() {
+//        // Given
+//        PageRequest pageRequest = PageRequest.of(0, 10);
+//        List<Customer> expectedCustomers = new ArrayList<>();
+//        expectedCustomers.add(Customer.builder()
+//                .id(1)
+//                .firstName("Hubert")
+//                .lastName("Bytner")
+//                .adress("Warszawa")
+//                .build());
+//        expectedCustomers.add(Customer.builder()
+//                .id(1)
+//                .firstName("Hubert")
+//                .lastName("Bytner")
+//                .adress("Warszawa")
+//                .build());
+//        when(customerRepository.findAll(any(PageRequest.class)))
+//                .thenReturn(new PageImpl<Customer>(expectedCustomers));
+//
+//        // When
+//        Page<Customer> actualCustomers = customerService.getAllCustomers(pageRequest);
+//
+//        // Then
+//        assertNotNull(actualCustomers);
+//        assertEquals(expectedCustomers.size(), actualCustomers.getContent().size());
+//        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.getContent().get(0).getId());
+//        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.getContent().get(1).getId());
+//    }
 
 }

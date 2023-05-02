@@ -15,19 +15,16 @@ public class CustomerDto {
     private int id;
     private String firstName;
     private String lastName;
-    private String addres;
-//    private int numOfBookSet;
+    private String adress;
     private int numOfRentSet;
 
     public static CustomerDto fromEntity(Customer customer) {
-//        Set<Book> books = customer.getBookSet();
         Set<Rent> rents = customer.getRentSet();
         return CustomerDto.builder()
                 .id(customer.getId())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
-                .addres(customer.getAdress())
-//                .numOfBookSet(books == null ? 0 : books.size())
+                .adress(customer.getAdress())
                 .numOfRentSet(rents == null ? 0 : rents.size())
                 .build();
     }
