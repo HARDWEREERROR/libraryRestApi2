@@ -92,7 +92,7 @@ public class RentControllerTest {
     }
 
     @Test
-    void testFindAll_ResultsInTeacherDtoListReturned() throws Exception {
+    void testFindAll_ResultsInRentDtoListReturned() throws Exception {
 
         mockMvc.perform(get("/api/LibraryRestAPI2/rent"))
                 .andDo(print())

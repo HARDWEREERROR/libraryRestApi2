@@ -78,8 +78,8 @@ public class BookControllerTest {
     @Test
     void testSave_SaveCompleted() throws Exception {
         CreateBookCommand command = new CreateBookCommand();
-        command.setTitle("aaaa");
-        command.setAuthor("Bytner");
+        command.setTitle("Aaaaa");
+        command.setAuthor("Bytner Hubert");
         command.setTypeOfBook(TypeOfBook.ADVENTURE);
 
         int expectedId = 3;
