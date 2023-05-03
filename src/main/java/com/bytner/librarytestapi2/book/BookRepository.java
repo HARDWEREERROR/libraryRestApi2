@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.Lock;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookRepository extends JpaRepository<Book, Integer> {
 
-    List<Book> findAllByActiveTrue();
+public interface BookRepository extends JpaRepository<Book, Integer> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Book> findWithLockingById(int id);
 
+    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+    Optional<Book> findWithOptimistickLockingById(int bookId);
 }

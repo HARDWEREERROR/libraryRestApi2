@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +52,9 @@ public class Book {
 
     @OneToMany(mappedBy = "book")
     private Set<Rent> bookUserSet;
+
+    @Version
+    private long version;
 
     @Override
     public String toString() {

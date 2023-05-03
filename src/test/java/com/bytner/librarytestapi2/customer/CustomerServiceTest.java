@@ -1,123 +1,95 @@
 package com.bytner.librarytestapi2.customer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-
-
-import org.junit.jupiter.api.BeforeEach;
+import com.bytner.librarytestapi2.book.model.Book;
+import com.bytner.librarytestapi2.customer.model.Customer;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import com.bytner.librarytestapi2.book.model.Book;
-import com.bytner.librarytestapi2.customer.model.Customer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CustomerServiceTest {
+class CustomerServiceTest {
 
+    @Mock
     private CustomerRepository customerRepository;
+
+    @InjectMocks
     private CustomerService customerService;
 
-    @BeforeEach
-    public void setUp() {
-        customerRepository = mock(CustomerRepository.class);
-        customerService = new CustomerService(customerRepository);
-    }
-
     @Test
-    public void testGetAll() {
-        // Given
-        List<Customer> expectedCustomers = new ArrayList<>();
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-
-        expectedCustomers.add(Customer.builder()
-                .id(2)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        when(customerRepository.findAllByActiveTrue()).thenReturn(expectedCustomers);
-
-        // When
-        List<Customer> actualCustomers = customerService.getAll();
-
-        // Then
-        assertNotNull(actualCustomers);
-        assertEquals(expectedCustomers.size(), actualCustomers.size());
-        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.get(0).getId());
-        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.get(1).getId());
-    }
-
-    @Test
-    public void testSave() {
-        // Given
+    void save_shouldSaveCustomer() {
         Customer customer = Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
+                .firstName("John")
+                .lastName("Doe")
+                .adress("Street 123")
+                .active(true)
                 .build();
-        when(customerRepository.save(any(Customer.class))).thenReturn(customer);
 
-        // When
+        when(customerRepository.save(customer)).thenReturn(customer);
+
         Customer savedCustomer = customerService.save(customer);
 
-        // Then
-        assertNotNull(savedCustomer);
-        assertEquals(customer.getId(), savedCustomer.getId());
-        assertEquals(customer.getFirstName(), savedCustomer.getFirstName());
-        assertEquals(customer.getLastName(), savedCustomer.getLastName());
-        assertEquals(customer.isActive(), savedCustomer.isActive());
+        assertEquals(customer, savedCustomer);
+        verify(customerRepository, times(1)).save(customer);
     }
 
     @Test
-    public void testGetAllCustomers() {
-        // Given
-        PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Customer> expectedCustomers = new ArrayList<>();
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        expectedCustomers.add(Customer.builder()
-                .id(1)
-                .firstName("Hubert")
-                .lastName("Bytner")
-                .adress("Warszawa")
-                .build());
-        when(customerRepository.findAll(any(PageRequest.class)))
-                .thenReturn(new PageImpl<Customer>(expectedCustomers));
+    void getCustomers_shouldReturnCustomersPage() {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(Customer.builder().id(1).build());
+        customers.add(Customer.builder().id(2).build());
+        Page<Customer> page = new PageImpl<>(customers);
+        Pageable pageable = Pageable.unpaged();
 
-        // When
-        Page<Customer> actualCustomers = customerService.getAllCustomers(pageRequest);
+        when(customerRepository.findAll(pageable)).thenReturn(page);
 
-        // Then
-        assertNotNull(actualCustomers);
-        assertEquals(expectedCustomers.size(), actualCustomers.getContent().size());
-        assertEquals(expectedCustomers.get(0).getId(), actualCustomers.getContent().get(0).getId());
-        assertEquals(expectedCustomers.get(1).getId(), actualCustomers.getContent().get(1).getId());
+        Page<Customer> resultPage = customerService.getCustomers(pageable);
+
+        assertEquals(page, resultPage);
+        verify(customerRepository, times(1)).findAll(pageable);
     }
 
+    @Test
+    void getCustomerHistory_shouldReturnCustomerHistory() {
+        int customerId = 1;
+        Customer customer = Customer.builder()
+                .id(customerId)
+                .bookSet(new ArrayList<>())
+                .build();
+        Book book1 = Book.builder().id(1).title("Book 1").build();
+        Book book2 = Book.builder().id(2).title("Book 2").build();
+        customer.getBookSet().add(book1);
+        customer.getBookSet().add(book2);
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+
+        List<Book> customerHistory = customerService.getCustomerHistory(customerId);
+
+        assertEquals(2, customerHistory.size());
+        assertTrue(customerHistory.contains(book1));
+        assertTrue(customerHistory.contains(book2));
+        verify(customerRepository, times(1)).findById(customerId);
+    }
+
+    @Test
+    void getCustomerHistory_shouldThrowEntityNotFoundExceptionWhenCustomerNotFound() {
+        int customerId = 1;
+
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> customerService.getCustomerHistory(customerId));
+        verify(customerRepository, times(1)).findById(customerId);
+    }
 }

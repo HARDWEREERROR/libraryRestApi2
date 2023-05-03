@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,21 +20,17 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public List<Customer> getAll() {
-        return customerRepository.findAllByActiveTrue();
-    }
-
     public Customer save(Customer customer) {
         return customerRepository.save(customer);
     }
 
-    public Page<Customer> getAllCustomers(PageRequest pageRequest) {
-        return customerRepository.findAll(pageRequest);
+    public Page<Customer> getCustomers(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     @Transactional
     public List<Book> getCustomerHistory(int customerId) {
-        Customer customer = customerRepository.findWithLockingById(customerId)
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat
                         .format("Customer with id={0} has not been found", customerId)));
 

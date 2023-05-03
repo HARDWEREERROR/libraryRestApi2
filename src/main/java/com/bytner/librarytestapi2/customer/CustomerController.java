@@ -6,7 +6,9 @@ import com.bytner.librarytestapi2.customer.model.command.CreateCustomerCommand;
 import com.bytner.librarytestapi2.customer.model.dto.CustomerDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,31 +29,21 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @GetMapping
-    public List<CustomerDto> getAll() {
-        return customerService.getAll().stream()
-                .map(CustomerDto::fromEntity)
-                .toList();
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDto CreateCustomer(@RequestBody @Valid CreateCustomerCommand createCustomerCommand) {
+    public CustomerDto createCustomer(@RequestBody @Valid CreateCustomerCommand createCustomerCommand) {
         Customer toSave = createCustomerCommand.toEntity();
         Customer saved = customerService.save(toSave);
         return CustomerDto.fromEntity(saved);
     }
 
-    @GetMapping("/customers")
-    public List<CustomerDto> getAllCustomers(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "3") int size, @RequestParam(name = "sort", defaultValue = "id") String sortField, @RequestParam(name = "direction", defaultValue = "asc") String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return customerService.getAllCustomers(pageRequest).stream()
-                .map(CustomerDto::fromEntity)
-                .toList();
+    @GetMapping()
+    public Page<CustomerDto> getCustomers(Pageable pageable) {
+        return customerService.getCustomers(pageable)
+                .map(CustomerDto::fromEntity);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/books")
     public List<BookDto> getCustomerHistory(@PathVariable int id) {
         return customerService.getCustomerHistory(id).stream()
                 .map(BookDto::fromEntity)

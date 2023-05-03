@@ -5,8 +5,10 @@ import com.bytner.librarytestapi2.book.model.command.CreateBookCommand;
 import com.bytner.librarytestapi2.book.model.dto.BookDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +26,6 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
-
-    @GetMapping
-    public List<BookDto> getAll() {
-        return bookService.getAll().stream()
-                .map(BookDto::fromEntity)
-                .toList();
-    }
 
     @PostMapping
     @ResponseStatus
@@ -41,18 +35,21 @@ public class BookController {
         return BookDto.fromEntity(saved);
     }
 
-    @PatchMapping("/{id}")
-    public BookDto blockOrUnlockRent(@PathVariable int id) {
-        Book update = bookService.blockOrUnlockRent(id);
+    @PatchMapping("/{id}/block")
+    public BookDto blockRent(@PathVariable int id) {
+        Book update = bookService.blockRent(id);
         return BookDto.fromEntity(update);
     }
 
-    @GetMapping("/books")
-    public List<BookDto> getAllBooks(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "3") int size, @RequestParam(name = "sort", defaultValue = "id") String sortField, @RequestParam(name = "direction", defaultValue = "asc") String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return bookService.getAllBooks(pageRequest).stream()
-                .map(BookDto::fromEntity)
-                .toList();
+    @PatchMapping("/{id}/unlock")
+    public BookDto unblock(@PathVariable int id) {
+        Book update = bookService.unlockRent(id);
+        return BookDto.fromEntity(update);
+    }
+
+    @GetMapping()
+    public Page<BookDto> getBooks(Pageable pageable) {
+        return bookService.getBooks(pageable)
+                .map(BookDto::fromEntity);
     }
 }

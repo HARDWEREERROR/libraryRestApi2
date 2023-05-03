@@ -1,14 +1,13 @@
 package com.bytner.librarytestapi2.book;
 
 import com.bytner.librarytestapi2.book.model.Book;
-import com.bytner.librarytestapi2.common.TypeOfBook;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,79 +16,87 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class BookServiceTest {
+public class BookServiceTest {
+
+    private BookService bookService;
 
     @Mock
     private BookRepository bookRepository;
 
-    private BookService bookService;
-
-    private final int bookId = 1;
-    private final Book testBook = Book.builder()
-            .title("Siema")
-            .author("Hubert Bytner")
-            .typeOfBook(TypeOfBook.ADVENTURE)
-            .build();
-
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
         bookService = new BookService(bookRepository);
     }
 
     @Test
-    void getAll_ReturnsListOfBooks() {
-        List<Book> books = new ArrayList<>();
-        books.add(testBook);
-        when(bookRepository.findAllByActiveTrue()).thenReturn(books);
+    public void save_shouldReturnSavedBook() {
+        // Given
+        Book book = new Book();
+        book.setId(1);
+        book.setTitle("Test book");
+        book.setAuthor("Test author");
 
-        List<Book> result = bookService.getAll();
+        when(bookRepository.save(any())).thenReturn(book);
 
-        assertEquals(books, result);
+        // When
+        Book result = bookService.save(book);
+
+        // Then
+        verify(bookRepository, times(1)).save(book);
+        Assertions.assertEquals(book, result);
     }
 
     @Test
-    void save_ReturnsSavedBook() {
-        when(bookRepository.save(any(Book.class))).thenReturn(testBook);
+    public void blockRent_shouldBlockRentForGivenBook() {
+        // Given
+        Book book = new Book();
+        book.setId(1);
+        book.setTitle("Test book");
+        book.setAuthor("Test author");
+        book.setRentAvaliable(true);
 
-        Book result = bookService.save(testBook);
+        when(bookRepository.findWithOptimistickLockingById(anyInt())).thenReturn(Optional.of(book));
+        when(bookRepository.save(any())).thenReturn(book);
 
-        assertEquals(testBook, result);
-    }
+        // When
+        Book result = bookService.blockRent(1);
 
-//    @Test
-//    void blockOrUnlockRent_BookExists_UpdatesAndReturnsBook() {
-//        when(bookRepository.findWithLockingById(bookId)).thenReturn(Optional.of(testBook));
-//        when(bookRepository.save(any(Book.class))).thenReturn(testBook);
-//
-//        Book result = bookService.blockOrUnlockRent(bookId);
-//
-//        verify(bookRepository, times(1)).findWithLockingById(bookId);
-//        verify(bookRepository, times(1)).save(any(Book.class));
-//        assertFalse(result.isRentAvaliable());
-//    }
-
-    @Test
-    void blockOrUnlockRent_BookDoesNotExist_ThrowsEntityNotFoundException() {
-        when(bookRepository.findWithLockingById(bookId)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> bookService.blockOrUnlockRent(bookId));
+        // Then
+        verify(bookRepository, times(1)).findWithOptimistickLockingById(1);
+        verify(bookRepository, times(1)).save(book);
+        Assertions.assertFalse(result.isRentAvaliable());
     }
 
     @Test
-    void getAllBooks_ReturnsPageOfBooks() {
-        List<Book> books = new ArrayList<>();
-        books.add(testBook);
-        Page<Book> bookPage = new PageImpl<>(books);
-        PageRequest pageRequest = PageRequest.of(0, 10);
-        when(bookRepository.findAll(pageRequest)).thenReturn(bookPage);
+    public void blockRent_shouldThrowEntityNotFoundExceptionWhenBookIsNotFound() {
+        // Given
+        when(bookRepository.findWithOptimistickLockingById(anyInt())).thenReturn(Optional.empty());
 
-        Page<Book> result = bookService.getAllBooks(pageRequest);
+        // When, Then
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            bookService.blockRent(1);
+        });
+    }
 
-        assertEquals(bookPage, result);
+    @Test
+    public void blockRent_shouldThrowOptimisticLockExceptionWhenBookIsAlreadyRented() {
+        // Given
+        Book book = new Book();
+        book.setId(1);
+        book.setTitle("Test book");
+        book.setAuthor("Test author");
+        book.setRentAvaliable(false);
+
+        when(bookRepository.findWithOptimistickLockingById(anyInt())).thenReturn(Optional.of(book));
+
+        // When, Then
+        Assertions.assertThrows(OptimisticLockException.class, () -> {
+            bookService.blockRent(1);
+        });
     }
 }
+
